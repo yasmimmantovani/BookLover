@@ -6,18 +6,30 @@ include('conexao.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = $_POST['nome'];
     $email = $_POST['email'];
-    $endereco = $_POST['endereco'];
+    $cep = $_POST['cep'];
+    $logradouro = $_POST['logradouro'];
+    $numero = $_POST['numero'];
+    $complemento = $_POST['complemento'];
+    $bairro = $_POST['bairro'];
+    $cidade = $_POST['cidade'];
+    $estado = $_POST['estado'];
 
     if (!empty($_POST['id_clientes'])) {
         $id = $_POST['id_clientes'];
         $mysqli->query("update clientes set
                         nome='$nome',
                         email='$email',
-                        endereco='$endereco'
+                        cep='$cep',
+                        logradouro='$logradouro',
+                        numero='$numero',
+                        complemento='$complemento',
+                        bairro='$bairro',
+                        cidade='$cidade',
+                        estado='$estado'
                         where id_clientes=$id");
     } else {
-        $mysqli->query("insert into clientes(nome, email, endereco)
-                        values('$nome', '$email', '$endereco')");
+        $mysqli->query("insert into clientes(nome, email, cep, logradouro, numero, complemento, bairro, cidade, estado)
+                        values('$nome', '$email', '$cep', '$logradouro', '$numero', '$complemento', '$bairro', '$cidade', '$estado')");
     }
     header("Location: clientes.php");
     exit;
@@ -100,7 +112,28 @@ $dados = $mysqli->query($sql);
                 <input type="email" name="email" class="input" required value="<?= $edit['email'] ?? '' ?>">
 
                 <label>Endereço:</label>
-                <input type="text" name="endereco" class="input" required value="<?= $edit['endereco'] ?? '' ?>">
+
+                <label>CEP:</label>
+                <input type="text" name="cep" id="cep" class="input" placeholder="Ex.:12345-0000" required maxlength="9" value="<?= $edit['cep'] ?? '' ?>">
+
+                <label>Logradouro:</label>
+                <input type="text" name="logradouro" id="logradouro" required value="<?= $edit['logradouro'] ?? '' ?>">
+
+                <label>Número:</label>
+                <input type="text" name="numero" id="numero" required value="<?= $edit['numero'] ?? '' ?>">
+
+                <label>Complemento:</label>
+                <input type="text" name="complemento" id="complemento" placeholder="Ex.: Casa, Apartamento..." value="<?= $edit['complemento'] ?? '' ?>">
+
+                <label>Bairro:</label>
+                <input type="text" name="bairro" id="bairro" required value="<?= $edit['bairro'] ?? '' ?>">
+
+                <label>Cidade:</label>
+                <input type="text" name="cidade" id="cidade" required value="<?= $edit['cidade'] ?? '' ?>">
+
+                <label>Estado:</label>
+                <input type="text" name="estado" id="estado" required value="<?= $edit['estado'] ?? '' ?>">
+
 
                 <button type="submit" class="btn-submit"><?= $edit ? "Salvar Alterações" : "Cadastrar" ?></button>
             </form>
@@ -147,9 +180,22 @@ $dados = $mysqli->query($sql);
             </div>
         </div>
     </div>
+
+    <!-- Modal de aviso CEP -->
+     <div id="cepModal" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <h3>Aviso</h3>
+            <p id="cepMessage"></p>
+
+            <div class="modal-actions">
+                <button id="closeCepModal" class="btn-secondary">Fechar</button>
+            </div>
+        </div>
+     </div>
         
 
     <!-- Tema -->
+    <script src="../js/cep.js"></script>
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
 
