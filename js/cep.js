@@ -1,7 +1,27 @@
 let cepValido = false;
+let cepAlteradoPeloUsuario = false;
+let cepOriginal = "";
+
+document.getElementById("cep").addEventListener("input", function(e) {
+    cepAlteradoPeloUsuario = true;
+
+    let valor = e.target.value.replace(/\D/g, "");
+
+    if (valor.length > 5) {
+        valor = valor.replace(/(\d{5})(\d{1,3})/, "$1-$2");
+    }
+
+    e.target.value = valor;
+});
+
+document.getElementById("cep").addEventListener("focus", () => {
+    cepAlteradoPeloUsuario = false;
+})
 
 document.getElementById("cep").addEventListener("blur", function() {
     const cep = this.value.replace(/\D/g, "");
+
+    if (cep === cepOriginal) return;
 
     if (cep.length === 8) {
         fetch(`https://viacep.com.br/ws/${cep}/json/`)
@@ -42,5 +62,14 @@ document.querySelector("form").addEventListener("submit", function(e) {
     if (!cepValido) {
         e.preventDefault();
         mostrarModalCep("Informe um CEP válido antes de prosseguir.");
+    }
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+    const campoCep = document.getElementById("cep");
+    cepOriginal = campoCep.value.replace(/\D/g, "");
+
+    if (cepOriginal.length === 8) {
+        cepValido = true;
     }
 });

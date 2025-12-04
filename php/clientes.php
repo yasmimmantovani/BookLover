@@ -28,6 +28,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         header("Location: clientes.php");
         exit;
+    } else {
+        $verificaEmail = $mysqli->prepare(
+            "SELECT id from usuarios_adm WHERE email = ? AND id != ?"
+        );
+        $idAtual = $_POST['id'] ?? 0;
+        $verificaEmail->bind_param("si", $email,  $idAtual);
+        $verificaEmail->execute();
+        $resEmail = $verificaEmail->get_result();
+
+        if ($resEmail->num_rows > 0) {
+            $_SESSION['mensagem'] = "Este e-mail já está cadastrado para um Administrador ou Funcionário.";
+            $_SESSION['tipo_msg'] = "error";
+
+            header("Location: clientes.php");
+            exit;
+        }
     }
 
     if (!empty($_POST['id_clientes'])) {
@@ -274,6 +290,7 @@ $dados = $mysqli->query($sql);
     <script src="../js/cep.js"></script>
     <script src="../js/theme.js"></script>
     <script src="../js/dashboard.js"></script>
+    <script src="../js/mascaras.js"></script>
 
     <!-- Ion Icons -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
